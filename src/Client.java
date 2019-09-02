@@ -19,19 +19,17 @@ public class Client {
 		{
 			@SuppressWarnings("resource")
 			Socket socket = new Socket(ip, port);
-			
-			// Output and Input Stream
+			//Input and Output Stream
 			BufferedReader input = new BufferedReader(new InputStreamReader(socket.getInputStream(), "UTF-8"));
 			BufferedWriter output = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream(), "UTF-8"));
-//			System.out.println("input:" + input +"\n");
-			
+			System.out.println("Input the word you want to search, add or remove \n");
+			System.out.println("Input Norm like:\n search-word \n add-word-meaning \n remove-word\n");
 		    @SuppressWarnings("resource")
 			Scanner scan = new Scanner(System.in);
 		    String str2 = null;
-		    while (scan.hasNextLine()) {
+		    if (scan.hasNextLine()) {
 	            str2 = scan.nextLine();
 			    String sendData =str2;
-//			    String sendData ="I want to connect";
 		    	output.write(sendData + "\n");
 		    	System.out.println("Message sent to Server--> " + sendData);
 				output.newLine();
@@ -40,12 +38,8 @@ public class Client {
 		    	if(message!=null)
 			    {
 		    		System.out.println(message+"\n");
-		    		scan.nextLine();
 			    }
-		    	
 	        }
-	        
-		    
 		} 
 		catch (UnknownHostException e)
 		{
