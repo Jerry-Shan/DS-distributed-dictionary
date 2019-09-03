@@ -1,3 +1,0 @@
-uni:university
-melb:Melbourne
-java:a programming language

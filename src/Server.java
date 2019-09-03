@@ -40,11 +40,6 @@ public class Server {
 //		writeDict();
 		readDict();
 		
-		// print dictionary
-		for (Entry<String, String> entry : dictionary.entrySet()) {
-			 System.out.println(entry.getKey()+"->"+entry.getValue()+"\n");
-		}
-		
 		try(ServerSocket server = factory.createServerSocket(port))
 		{
 			System.out.println("Waiting for client connection-");
@@ -136,6 +131,11 @@ public class Server {
 			dictionary = (HashMap<String,String>) objInput.readObject();
 			fileInput.close();
 			objInput.close();
+			
+			// print dictionary
+			for (Entry<String, String> entry : dictionary.entrySet()) {
+				 System.out.println(entry.getKey()+"->"+entry.getValue()+"\n");
+			}
 		} 
 		catch (SocketException e) {
 			e.printStackTrace();

@@ -4,6 +4,13 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.net.Socket;
+import java.net.UnknownHostException;
 import java.awt.event.ActionEvent;
 import java.awt.Font;
 import java.awt.GridBagLayout;
@@ -14,11 +21,17 @@ import javax.swing.JTextField;
 public class ClientFrame {
 
 	private JFrame frame;
-	private JTextField textFieldSearch;
-	private JTextField textFieldRevome;
+	private JTextField wordField;
+	private JTextField meaningField;
 	private JButton btnSearch;
-	private JTextField textField;
+	private static JTextField responseField;
 	private String sendData;
+	
+	private static String ip = "localhost";
+	private static int port = 3005;
+	private static Socket socket;
+	private static BufferedReader input;
+	private static BufferedWriter output;
 	/**
 	 * Launch the application.
 	 */
@@ -39,6 +52,7 @@ public class ClientFrame {
 	 * Create the application.
 	 */
 	public ClientFrame() {
+		
 		initialize();
 	}
 	/**
@@ -47,6 +61,7 @@ public class ClientFrame {
 	private void initialize() {
 		frame = new JFrame();
 		frame.setBounds(100, 100, 450, 300);
+		frame.setTitle("Client GUI");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0};
@@ -70,21 +85,23 @@ public class ClientFrame {
 		gbc_lblWord.gridy = 2;
 		frame.getContentPane().add(lblWord, gbc_lblWord);
 		
-		textFieldSearch = new JTextField();
-		GridBagConstraints gbc_textFieldSearch = new GridBagConstraints();
-		gbc_textFieldSearch.fill = GridBagConstraints.HORIZONTAL;
-		gbc_textFieldSearch.insets = new Insets(0, 0, 5, 5);
-		gbc_textFieldSearch.gridx = 2;
-		gbc_textFieldSearch.gridy = 2;
-		frame.getContentPane().add(textFieldSearch, gbc_textFieldSearch);
-		textFieldSearch.setColumns(10);
+		wordField = new JTextField();
+		GridBagConstraints gbc_wordField = new GridBagConstraints();
+		gbc_wordField.fill = GridBagConstraints.BOTH;
+		gbc_wordField.insets = new Insets(0, 0, 5, 5);
+		gbc_wordField.gridx = 2;
+		gbc_wordField.gridy = 2;
+		frame.getContentPane().add(wordField, gbc_wordField);
+		wordField.setColumns(10);
 		
 		JButton btnSearch = new JButton("Search");
+		
 		btnSearch.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				String searchWord = gettextFieldSearch().getText();
-				setSendData("search-"+searchWord);
-//				System.out.println("click Search: " + getSendData());
+				String searchWord = wordField.getText();
+				String searchData = "search-"+searchWord;
+				System.out.println("click Search: " + searchData);
+				sendData(searchData);
 			}
 		});
 		GridBagConstraints gbc_btnSearch = new GridBagConstraints();
@@ -94,6 +111,38 @@ public class ClientFrame {
 		gbc_btnSearch.gridy = 2;
 		frame.getContentPane().add(btnSearch, gbc_btnSearch);
 		
+		JButton btnRemove = new JButton("Remove");
+		btnRemove.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				String removeWord = wordField.getText();
+				String removeData = "remove-"+removeWord;
+				System.out.println("click Search: " + getSendData());
+				sendData(removeData);
+			}
+		});
+		GridBagConstraints gbc_btnRemove = new GridBagConstraints();
+		gbc_btnRemove.fill = GridBagConstraints.HORIZONTAL;
+		gbc_btnRemove.insets = new Insets(0, 0, 5, 5);
+		gbc_btnRemove.gridx = 4;
+		gbc_btnRemove.gridy = 3;
+		frame.getContentPane().add(btnRemove, gbc_btnRemove);
+		
+		JButton btnAdd = new JButton("Add");
+		btnAdd.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				String addWord = wordField.getText();
+				String addMeaning = meaningField.getText();
+				String addData = "add-"+addWord+"-"+addMeaning;
+				System.out.println("click Add: " + addData);
+				sendData(addData);}
+		});
+		GridBagConstraints gbc_btnAdd = new GridBagConstraints();
+		gbc_btnAdd.fill = GridBagConstraints.HORIZONTAL;
+		gbc_btnAdd.insets = new Insets(0, 0, 5, 5);
+		gbc_btnAdd.gridx = 4;
+		gbc_btnAdd.gridy = 4;
+		frame.getContentPane().add(btnAdd, gbc_btnAdd);
+		
 		JLabel lblResponse = new JLabel("Response");
 		GridBagConstraints gbc_lblResponse = new GridBagConstraints();
 		gbc_lblResponse.gridwidth = 3;
@@ -102,24 +151,18 @@ public class ClientFrame {
 		gbc_lblResponse.gridy = 2;
 		frame.getContentPane().add(lblResponse, gbc_lblResponse);
 		
-		JButton btnRemove = new JButton("Remove");
-		GridBagConstraints gbc_btnRemove = new GridBagConstraints();
-		gbc_btnRemove.fill = GridBagConstraints.HORIZONTAL;
-		gbc_btnRemove.insets = new Insets(0, 0, 5, 5);
-		gbc_btnRemove.gridx = 4;
-		gbc_btnRemove.gridy = 3;
-		frame.getContentPane().add(btnRemove, gbc_btnRemove);
+
 		
-		textField = new JTextField();
-		GridBagConstraints gbc_textField = new GridBagConstraints();
-		gbc_textField.gridwidth = 3;
-		gbc_textField.gridheight = 2;
-		gbc_textField.insets = new Insets(0, 0, 5, 5);
-		gbc_textField.fill = GridBagConstraints.BOTH;
-		gbc_textField.gridx = 5;
-		gbc_textField.gridy = 3;
-		frame.getContentPane().add(textField, gbc_textField);
-		textField.setColumns(10);
+		responseField = new JTextField();
+		GridBagConstraints gbc_responseField = new GridBagConstraints();
+		gbc_responseField.gridwidth = 3;
+		gbc_responseField.gridheight = 2;
+		gbc_responseField.insets = new Insets(0, 0, 5, 5);
+		gbc_responseField.fill = GridBagConstraints.BOTH;
+		gbc_responseField.gridx = 5;
+		gbc_responseField.gridy = 3;
+		frame.getContentPane().add(responseField, gbc_responseField);
+		responseField.setColumns(10);
 		
 		JLabel lblMeaning = new JLabel("Meaning");
 		GridBagConstraints gbc_lblMeaning = new GridBagConstraints();
@@ -128,28 +171,58 @@ public class ClientFrame {
 		gbc_lblMeaning.gridy = 4;
 		frame.getContentPane().add(lblMeaning, gbc_lblMeaning);
 		
-		textFieldRevome = new JTextField();
-		GridBagConstraints gbc_textFieldRevome = new GridBagConstraints();
-		gbc_textFieldRevome.fill = GridBagConstraints.HORIZONTAL;
-		gbc_textFieldRevome.insets = new Insets(0, 0, 5, 5);
-		gbc_textFieldRevome.gridx = 2;
-		gbc_textFieldRevome.gridy = 4;
-		frame.getContentPane().add(textFieldRevome, gbc_textFieldRevome);
-		textFieldRevome.setColumns(10);
+		meaningField = new JTextField();
+		GridBagConstraints gbc_meaningField = new GridBagConstraints();
+		gbc_meaningField.fill = GridBagConstraints.BOTH;
+		gbc_meaningField.insets = new Insets(0, 0, 5, 5);
+		gbc_meaningField.gridx = 2;
+		gbc_meaningField.gridy = 4;
+		frame.getContentPane().add(meaningField, gbc_meaningField);
+		meaningField.setColumns(10);
 		
-		JButton btnAdd = new JButton("Add");
-		GridBagConstraints gbc_btnAdd = new GridBagConstraints();
-		gbc_btnAdd.fill = GridBagConstraints.HORIZONTAL;
-		gbc_btnAdd.insets = new Insets(0, 0, 5, 5);
-		gbc_btnAdd.gridx = 4;
-		gbc_btnAdd.gridy = 4;
-		frame.getContentPane().add(btnAdd, gbc_btnAdd);
 		frame.setVisible(true);
+	}
+	
+	private static void sendData(String inputData) {
+		System.out.println("Into sendData method");
+		try {
+			socket = new Socket(ip, port);
+			input = new BufferedReader(new InputStreamReader(socket.getInputStream(), "UTF-8"));
+			output = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream(), "UTF-8"));
+		} catch (UnknownHostException e1) {
+			e1.printStackTrace();
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+		try
+		{
+			String sendData = inputData;
+			System.out.println("Message sent to Server--> " + sendData);
+		    output.write(sendData + "\n");
+			output.newLine();
+	    	output.flush();
+	    	String message = input.readLine();
+	    	if(message!=null)
+		    {
+	    		System.out.println(message+"\n");
+	    		responseField.setText(message);
+		    }
+	    	
+		    
+		} 
+		catch (UnknownHostException e)
+		{
+			e.printStackTrace();
+		}
+		catch (IOException e) 
+		{
+			e.printStackTrace();
+		}
 	}
 	
 	// Getter methods
 	public JTextField gettextFieldSearch() {
-		return textFieldSearch;
+		return wordField;
 	}
 
 	public JButton getBtnSearch() {

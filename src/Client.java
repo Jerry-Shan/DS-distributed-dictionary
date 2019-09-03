@@ -1,3 +1,4 @@
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
@@ -24,10 +25,8 @@ public class Client {
 			input = new BufferedReader(new InputStreamReader(socket.getInputStream(), "UTF-8"));
 			output = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream(), "UTF-8"));
 		} catch (UnknownHostException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		} catch (IOException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 		try {
@@ -73,3 +72,4 @@ public class Client {
 		}
 	}
 }
+
