@@ -12,7 +12,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.BindException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
+import java.net.SocketException;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
@@ -120,22 +120,33 @@ public class Server {
 	@SuppressWarnings("unchecked")
 	private static void readDict() {
 		File f = new File(DICT_PATH);
-		if(!f.exists()){
-			dictionary = new HashMap<String,String>();
-		}
 		try{
+			if(!f.exists()){
+				dictionary = new HashMap<String,String>();
+				dictionary.put("England", "London");
+				f.createNewFile();
+				FileOutputStream fileOutput = new FileOutputStream(DICT_PATH);
+				ObjectOutputStream objOutput = new ObjectOutputStream(fileOutput);
+				objOutput.writeObject(dictionary);
+				objOutput.close();
+				fileOutput.close();
+			}
 			FileInputStream fileInput = new FileInputStream(DICT_PATH);
 			ObjectInputStream objInput = new ObjectInputStream(fileInput);
 			dictionary = (HashMap<String,String>) objInput.readObject();
 			fileInput.close();
 			objInput.close();
 		} 
+		catch (SocketException e) {
+			e.printStackTrace();
+		}
 		catch(IOException e) {
 			e.printStackTrace();
 		} 
 		catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}		
+		
 	}
 	
 	private static void writeDict(){
