@@ -23,7 +23,7 @@ public class Server {
 	private static int port = 3005;
 	
 	// Identifies the user number connected
-	private static int counter = 0;
+//	private static int counter = 0;
 	
 	// Declare the Dictionary Path
 	private static String DICT_PATH = "src/dictionary.txt";
@@ -36,8 +36,6 @@ public class Server {
 		ServerSocketFactory factory = ServerSocketFactory.getDefault();
 		
 		// read dictionary from dictionary.txt to HashMap<String,String> dictionary
-//		dictionary.put("England", "London");
-//		writeDict();
 		readDict();
 		
 		try(ServerSocket server = factory.createServerSocket(port))
@@ -48,8 +46,8 @@ public class Server {
 			while(true)
 			{
 				Socket client = server.accept();
-				counter++;
-				System.out.println("Client "+counter+": Applying for connection!"+"\n");
+//				counter++;
+//				System.out.println("Client "+counter+": Applying for connection!"+"\n");
 							
 				// Start a new thread for a connection
 				Thread t = new Thread(() -> serveClient(client));
@@ -69,6 +67,8 @@ public class Server {
 	
 	private static void serveClient(Socket client)
 	{
+		printDict();
+		
 		try(Socket clientSocket = client)
 		{
 			// Input stream
@@ -133,9 +133,7 @@ public class Server {
 			objInput.close();
 			
 			// print dictionary
-			for (Entry<String, String> entry : dictionary.entrySet()) {
-				 System.out.println(entry.getKey()+"->"+entry.getValue()+"\n");
-			}
+			printDict();
 		} 
 		catch (SocketException e) {
 			e.printStackTrace();
@@ -167,7 +165,15 @@ public class Server {
 			e.printStackTrace();
 		}
 	}
-
+	
+	private static void printDict() {
+		// print dictionary
+		System.out.println("Current Dictionary is:");
+		for (Entry<String, String> entry : dictionary.entrySet()) {
+			 System.out.println(entry.getKey()+"->"+entry.getValue());
+		}
+	}
+	
 	private static void searchDict(String word,Socket client) {
 		try {
 			BufferedWriter out = null;
