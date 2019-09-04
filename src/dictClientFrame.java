@@ -1,5 +1,13 @@
-import java.awt.EventQueue;
+/**   
+* @Title: ${file_name} 
+* @Package ${package_name} 
+* @Description: ${This is a GUI of dictionary client for searching,remove or add words}
+* @author Jinzhe Shan  
+* @date ${date} ${time} 
+* @version V2.1
+*/
 
+import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JButton;
@@ -21,7 +29,7 @@ import java.awt.Insets;
 import javax.swing.JTextField;
 import javax.swing.JPanel;
 
-public class ClientFrame {
+public class dictClientFrame {
 
 	JFrame frame;
 	private JTextField wordField;
@@ -29,7 +37,7 @@ public class ClientFrame {
 	private static JTextField responseField;
 	
 	private static String ip = "localhost";
-	private static int port = 3005;
+	private static int port = 2019;
 	private static Socket socket;
 	private static BufferedReader input;
 	private static BufferedWriter output;
@@ -41,7 +49,7 @@ public class ClientFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					ClientFrame window = new ClientFrame();
+					dictClientFrame window = new dictClientFrame();
 					window.frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -53,7 +61,7 @@ public class ClientFrame {
 	/**
 	 * Create the application.
 	 */
-	public ClientFrame() {
+	public dictClientFrame() {
 		
 		initialize();
 	}
@@ -178,10 +186,16 @@ public class ClientFrame {
 			public void actionPerformed(ActionEvent e) {
 				String addWord = wordField.getText();
 				String addMeaning = meaningField.getText();
-				String addData = "add-"+addWord+"-"+addMeaning;
-				System.out.println("click Add: " + addData);
-				sendData(addData);}
-		});
+				if(addMeaning!=null) {
+					String addData = "add-"+addWord+"-"+addMeaning;
+					System.out.println("click Add: " + addData);
+					sendData(addData);
+				}
+				else{
+					System.out.println("Error: please input the word you want to add with its meaning");
+				}
+			}
+			});
 		GridBagConstraints gbc_btnAdd = new GridBagConstraints();
 		gbc_btnAdd.fill = GridBagConstraints.HORIZONTAL;
 		gbc_btnAdd.insets = new Insets(0, 0, 5, 5);

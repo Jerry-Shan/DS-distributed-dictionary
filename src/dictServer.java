@@ -1,3 +1,12 @@
+/**   
+* @Title: ${file_name} 
+* @Package ${package_name} 
+* @Description: ${This is a multi-thread dictionary server }
+* @author Jinzhe Shan  
+* @date ${date} ${time} 
+* @version V3.0
+*/
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -15,15 +24,12 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.util.HashMap;
 import java.util.Map.Entry;
-
 import javax.net.ServerSocketFactory;
-public class Server {
+
+public class dictServer {
 	
 	// Declare the port number
-	private static int port = 3005;
-	
-	// Identifies the user number connected
-//	private static int counter = 0;
+	private static int port = 2019;
 	
 	// Declare the Dictionary Path
 	private static String DICT_PATH = "src/dictionary.txt";
@@ -42,13 +48,13 @@ public class Server {
 		{
 			System.out.println("Waiting for client connection-");
 			
+			dictServerFrame5 serverGUI = new dictServerFrame5();
+			serverGUI.currentDict(dictionary);
+			
 			// Wait for connections.
 			while(true)
 			{
 				Socket client = server.accept();
-//				counter++;
-//				System.out.println("Client "+counter+": Applying for connection!"+"\n");
-							
 				// Start a new thread for a connection
 				Thread t = new Thread(() -> serveClient(client));
 				t.start();
@@ -65,6 +71,7 @@ public class Server {
 		
 	}
 	
+
 	private static void serveClient(Socket client)
 	{
 		printDict();
@@ -81,22 +88,28 @@ public class Server {
 //			String meaning = dictionary.get(client_Message);
 			if(client_Message!=null){
 				String[] msgList = client_Message.split("-");
-				for(int i =0;i<msgList.length;i++) {
-					System.out.println(msgList[i]);
+				if(msgList.length <2) {
+					System.out.println("Error: please type the word you want to search, add or remove");
+					out.write("Error: please type the word you want to search, add or remove");
+					out.newLine();
+					out.flush();
 				}
-				if(msgList.length==2 || msgList.length==3) {
+//				for(int i =0;i<msgList.length;i++) {
+//					System.out.println(msgList[i]);
+//				}
+				else if(msgList.length==2 || msgList.length==3) {
 					String type = msgList[0];
 					String word = msgList[1];
 					switch(type){
 					case "search": searchDict(word, client);
 					case "remove": addorRemoveDict(client_Message,client);
 					case "add"   : addorRemoveDict(client_Message,client);
-					default :{
+//					default :{
 //						System.out.println("Client Input may be wrong, sending the Error Code to Client...");
-						out.write("Client Input is wrong. Please input as norm.");
-						out.newLine();
-						out.flush();
-					}
+//						out.write("Client Input is wrong. Please input as norm.");
+//						out.newLine();
+//						out.flush();
+//					}
 					}
 				}
 				else {
@@ -206,18 +219,24 @@ public class Server {
 			String type = msgList[0];
 			String word = msgList[1];
 			if(type.equals("add")) {
-				if (dictionary.get(word) == null) {
+				if (msgList.length !=3) {
+					System.out.println("Error: please input the word you want to add with its meaning");
+					out.write("Error: please input the word you want to add with its meaning");
+					out.newLine();
+					out.flush();
+				}
+				else if (dictionary.get(word) == null) {
 					String meaning = msgList[2];
 					dictionary.put(word,meaning);
-					System.out.println("the word is added into the dectionary.");
+					System.out.println("The word of " + word + " is added into the dectionary.");
 					out.write("The word of " + word + " is added into the dictionary");
 					out.newLine();
 					out.flush();
 					writeDict();
 				}
 				else {
-					System.out.println("the word is already in the dectionary.");
-					out.write("The word of " + word + " is already in the dictionary");
+					System.out.println("The word of " + word + " is already in the dectionary.");
+					out.write("The word of " + word + " is already in the dictionary.");
 					out.newLine();
 					out.flush();
 				}
@@ -225,14 +244,14 @@ public class Server {
 			if(type.equals("remove")) {
 				if(dictionary.get(word)!=null) {
 					dictionary.remove(word);
-					System.out.println("the word has been removed from the dectionary.");
-					out.write("The word of " + word + " has been removed from the dictionary");
+					System.out.println("The word of " + word + " has been removed from the dectionary.");
+					out.write("The word of " + word + " has been removed from the dictionary.");
 					out.newLine();
 					out.flush();
 					writeDict();
 				}
 				else {
-					out.write("The word of " + word + " is already in dictionary");
+					out.write("The word of " + word + " is not in dictionary,please try another word.");
 					out.newLine();
 					out.flush();
 				}
