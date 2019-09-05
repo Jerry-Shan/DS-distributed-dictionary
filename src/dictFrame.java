@@ -24,20 +24,22 @@ import java.io.ObjectOutputStream;
 import java.net.SocketException;
 import java.util.HashMap;
 import java.awt.event.ActionEvent;
+import java.awt.Color;
 
-public class dictServerFrame5 {
+public class dictFrame {
 
 	private JFrame frame;
 	private static HashMap<String, String> dictionary =  new HashMap<String, String>();
-	private static String DICT_PATH = "src/dictionary.txt";
+	private static String DICT_PATH = "dictionary.txt";
 	/**
 	 * Launch the application.
 	 */
 	public static void main(String[] args) {
+		
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					dictServerFrame5 window = new dictServerFrame5();
+					dictFrame window = new dictFrame();
 					window.frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -49,7 +51,7 @@ public class dictServerFrame5 {
 	/**
 	 * Create the application.
 	 */
-	public dictServerFrame5() {
+	public dictFrame() {
 		initialize();
 	}
 
@@ -60,11 +62,12 @@ public class dictServerFrame5 {
 		frame = new JFrame();
 		frame.setBounds(100, 100, 450, 300);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setTitle("Diction Server Frame");
+		frame.setTitle("Dictionary Frame");
 		frame.getContentPane().setLayout(new BorderLayout(0, 0));
 		
 		JLabel lblwordmeaning = new JLabel("Current Dictionary");
-		lblwordmeaning.setFont(new Font("Arial", Font.PLAIN, 16));
+		lblwordmeaning.setBackground(Color.WHITE);
+		lblwordmeaning.setFont(new Font("Calibri", Font.PLAIN, 16));
 		frame.getContentPane().add(lblwordmeaning, BorderLayout.NORTH);
 		
 		JButton btnFresh = new JButton("Fresh");

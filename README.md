@@ -1,2 +1,11 @@
 # 2019-DS-dictionary-SJZ
- COMP90015 : Distr ibuted Systems Assignment 1 at UniMelb 2019 S2
+ COMP90015 : Distributed Systems Assignment 1 at UniMelb 2019 S2
+
+## How to launch this project?
+
+ 1. Import the whole project to IDEA or eclipse. My environment is JDK 12 and Windows 10.
+
+ 2. Run dictServer.java firstly to set up the dictionary server
+
+ 3. Run dictClient.java, which will open two GUI. one is for Client clicking, another is for displaying current dictionary.
+ 

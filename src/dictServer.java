@@ -32,7 +32,7 @@ public class dictServer {
 	private static int port = 2019;
 	
 	// Declare the Dictionary Path
-	private static String DICT_PATH = "src/dictionary.txt";
+	private static String DICT_PATH = "dictionary.txt";
 	
 	// Store Dictionary in HashMap
 	private static HashMap<String, String> dictionary =  new HashMap<String, String>();
@@ -47,9 +47,6 @@ public class dictServer {
 		try(ServerSocket server = factory.createServerSocket(port))
 		{
 			System.out.println("Waiting for client connection-");
-			
-			dictServerFrame5 serverGUI = new dictServerFrame5();
-			serverGUI.currentDict(dictionary);
 			
 			// Wait for connections.
 			while(true)
@@ -131,7 +128,7 @@ public class dictServer {
 		try{
 			if(!f.exists()){
 				dictionary = new HashMap<String,String>();
-				dictionary.put("England", "London");
+				dictionary.put("sjz", "Jinzhe Shan");
 				f.createNewFile();
 				FileOutputStream fileOutput = new FileOutputStream(DICT_PATH);
 				ObjectOutputStream objOutput = new ObjectOutputStream(fileOutput);
@@ -204,7 +201,10 @@ public class dictServer {
 			out.newLine();
 			out.flush();
 		}
-		} catch (UnsupportedEncodingException e) {
+		} catch (NullPointerException e) {
+			System.out.println("Please input the word you want to search");
+		}
+		catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();

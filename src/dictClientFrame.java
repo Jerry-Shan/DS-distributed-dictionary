@@ -28,6 +28,7 @@ import java.awt.GridBagConstraints;
 import java.awt.Insets;
 import javax.swing.JTextField;
 import javax.swing.JPanel;
+import java.awt.Color;
 
 public class dictClientFrame {
 
@@ -46,6 +47,8 @@ public class dictClientFrame {
 	 * Launch the application.
 	 */
 	public static void main(String[] args) {
+		dictFrame serverGUI = new dictFrame();
+		
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
@@ -70,6 +73,7 @@ public class dictClientFrame {
 	 */
 	private void initialize() {
 		frame = new JFrame();
+		frame.getContentPane().setBackground(Color.WHITE);
 		frame.setBounds(100, 100, 450, 300);
 		frame.setTitle("Client GUI");
 		
@@ -255,6 +259,14 @@ public class dictClientFrame {
 		}
 	}
 
+	// close the window after close connection
+	class MyWindowListener extends WindowAdapter{
+		@Override
+		public void windowClosing(WindowEvent e) {
+			super.windowClosing(e);
+			exitClient();
+		}
+	
 	private void exitClient() {
 		try {
 			socket = new Socket(ip, port);
@@ -271,13 +283,6 @@ public class dictClientFrame {
 		}
 	}
 	
-	// close the window after close connection
-	class MyWindowListener extends WindowAdapter{
-		@Override
-		public void windowClosing(WindowEvent e) {
-			super.windowClosing(e);
-			exitClient();
-		}
 	}
 
 	
