@@ -9,3 +9,8 @@
 
  3. Run dictClient.java, which will open two GUI. one is for Client clicking, another is for displaying current dictionary.
  
+
+## Contact with me
+You are always free to contact with me if you have any quesion or confusion about this project :)
+Email: jinzhes@student.unimelb.edu.au
+ 
